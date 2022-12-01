@@ -222,50 +222,45 @@ def identify_text(text):
           clf.predict(vector)[0])
 
 
-identify_text("Hello! My name is Abderrahman! I like the potatoes ")
+test_sentences = ["Lebe, wie du, wenn du stirbst, wünschen wirst, gelebt zu haben.",
+                  "Denke an all das Schöne, was in dir selbst und dich herum wächst und sei glücklich!",
+"Wie groß wäre die Amortisationszeit des Prozesses unter veränderten Bedingungen?",
+"Abzweigdose für Leitungen zur Aufnahme von elektrischen Kabeln",
+"Esperame un rato que tengo que reiniciar el modem",
+                  "¿Conoces algún lugar cerca donde podamos hablar tranquilamente?",
+"No me vengas con esto ahora.", "Parece que fue ayer, ¿no?", "¡Cuánto tiempo sin verte!",
+"¡Qué bien te ves!", "কারো সাথে ভাগাভাগি করলে সমস্যা অর্ধেক হয়ে যায়", "ভালবাসার নৌকা পাহাড় বইয়ে যায়।", "নয়নের মণি",
+"এই ভাষা যথেষ্ট নয়", "أهلاً", "لا تقلق", "كيف أصل إلى هناك، من فضلك؟", "أراك في المرة القادمة", "مساء الخير",
+"It's never been my responsibility to glaze the donuts.",
+                  "There's an art to getting your way, and spitting olive pits across the table isn't it.",
+"There's an art to getting your way, and spitting olive pits across the table isn't it.",
+"We should play with legos at camp.", "The events transpired in an unfortunate manner",
+                  "L'invention constitue donc un dispositif miniaturisé économique.",
+"Chaque participant peut soumettre jusqu'à cinq photos par concours.",
+                  "Je souhaite soumettre une œuvre VR.", "Hello! My name is Abderrahman! I like potatoes ",
+                  "This notion is beyond preposterous. I shall return to Liverpool and watch my beloved team play.",
+                  "تو شاہیں ہے پرواز ہے کام تیرا ترے سامنے اور بھی ہیں",
+                  "عروجِ آدم خاکی سے انجم سہمے جاتہ یہ ٹوٹا ہوا تارا مہ کامل نہ بن جائ",  "بھری بزم میں راز کی بات کہہ دی",
+                 "Quem vê cara não vê coração", "Quem não arrisca não petisca", "Você deveria pedir um aumento de salário",
+                  "Quem não arrisca não petisca!", "Aqui se faz, aqui se paga", "Cada macaco no seu galho", "Доверяй, но проверяй",
+                  "Мой дядя самых честных правил", "Не хочу учиться, а хочу жениться!", "Тварь я дрожащая или право имею",
+                  "Любовь зла, полюбишь и козла"]
 
-identify_text("je suis la personne malade.")
 
-identify_text("Je souhaite soumettre une œuvre VR.")
 
-identify_text("Chaque participant peut soumettre jusqu'à cinq photos par concours.")
 
-identify_text("L'invention constitue donc un dispositif miniaturisé économique.")
 
-identify_text("We should play with legos at camp.")
 
-identify_text("We should play with legos at camp.")
 
-identify_text("There's an art to getting your way, and spitting olive pits across the table isn't it.")
 
-identify_text("It's never been my responsibility to glaze the donuts.")
 
-identify_text("مساء الخير")
 
-identify_text("أراك في المرة القادمة")
 
-identify_text("كيف أصل إلى هناك، من فضلك؟")
 
-identify_text("لا تقلق")
 
-identify_text("أهلاً")
 
-identify_text("এই ভাষা যথেষ্ট নয়")
 
-identify_text("নয়নের মণি")
 
-identify_text("ভালবাসার নৌকা পাহাড় বইয়ে যায়।")
 
-identify_text("কারো সাথে ভাগাভাগি করলে সমস্যা অর্ধেক হয়ে যায়")
+                  ]
 
-identify_text("¡Qué bien te ves!")
-
-identify_text("¡Cuánto tiempo sin verte!")
-
-identify_text("Parece que fue ayer, ¿no?")
-
-identify_text("No me vengas con esto ahora.")
-
-identify_text("¿Conoces algún lugar cerca donde podamos hablar tranquilamente?")
-
-identify_text("Esperame un rato que tengo que reiniciar el modem")
