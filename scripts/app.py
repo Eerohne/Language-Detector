@@ -88,7 +88,7 @@ def predict():
     if request.form['action'] == 'pick':
         randIndex = random.randint(0, len(test_sentences) - 1)
         chosenText = test_sentences[randIndex]
-
+        return render_template("index.html", random_text=chosenText)
 
     elif request.form['action'] == 'identify':
         feature = [str(txt) for txt in request.form.values()]
