@@ -14,7 +14,7 @@ Project statement - our project consists of a language identification program th
 """
 
 # importing libraries
-import pandas as pd
+import pickle
 from collections import Counter
 import string
 import re
@@ -63,7 +63,7 @@ print("Length of X_train: " + str(len(X_train_10)))
 lang_dict = {}
 for lang in most_common_languages:
     lang_dict[lang] = []
-#print(lang_dict)
+# print(lang_dict)
 
 for i in range(len(X_train_10)):
     language = Y_train_10[i]
@@ -72,7 +72,7 @@ for i in range(len(X_train_10)):
     except:
         print(language)
 
-#print(lang_dict["eng"][0:2])
+# print(lang_dict["eng"][0:2])
 
 # create a dictionary with language mapping to all words in the language
 vocab_dict = {}
@@ -92,7 +92,10 @@ for language in lang_dict:  # iterate through dictionary, for each language,
 
 print(vocab_dict["eng"])
 
-"""We will proceed now by implementing the bag-of-words method that takes a language and returns a list of the most common words in it."""
+"""
+We will proceed now by implementing the bag-of-words method that takes a language and returns a list of the most 
+common words in it. 
+"""
 
 
 # Bag of words
@@ -108,13 +111,21 @@ for lang in most_common_languages:
 print("Bag: " + str(len(bag)))
 print(bag)
 
+'''
+Save bag to file
+'''
+file = open('bag.txt', 'w')
+for word in bag:
+    file.writelines(word + '\n')
+file.close()
 
-# vectorize a certain piece of text
 
-def vectorize(sentence, bag):
+# vectorize function (takes a sentence and returns a vector)
+
+def vectorize(sentence, vocab):
     return_dict = [0] * word_per_lang * 10
     count = 0
-    for i in [bag.index(word) for word in sentence.split() if word in bag]:
+    for i in [vocab.index(word) for word in sentence.split() if word in vocab]:
         return_dict[i] += 1
         count += 1
 
@@ -128,14 +139,7 @@ X_train_vect = []
 for i in X_train_10:
     X_train_vect.append(vectorize(i, bag))
 
-print(max(X_train_vect[2]))
-
-"""Implementation of Naive Bayes"""
-
-# get test data 
-
-# load in data labels and training data 
-
+# get test data
 X_test_file = open('../wili-2018/x_test.txt', 'r')
 Y_test_file = open('../wili-2018/y_test.txt', 'r')
 X_test_str = X_test_file.read()
@@ -143,7 +147,6 @@ Y_test_str = Y_test_file.read()
 
 X_test = X_test_str.split("\n")
 Y_test = Y_test_str.split("\n")
-
 
 X_test_10 = []
 Y_test_10 = []
@@ -155,12 +158,13 @@ for i in range(len(X_test)):
 
 print("Length of X_test: " + str(len(X_test_10)))
 
-# vectorize test
+# vectorize test set
 X_test_vect = []
 for i in X_test_10:
     X_test_vect.append(vectorize(i, bag))
 
-# fit model and test accuracy 
+"""Implementation of Naive Bayes"""
+# fit model and test accuracy
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import ConfusionMatrixDisplay
@@ -222,45 +226,8 @@ def identify_text(text):
           clf.predict(vector)[0])
 
 
-test_sentences = ["Lebe, wie du, wenn du stirbst, wünschen wirst, gelebt zu haben.",
-                  "Denke an all das Schöne, was in dir selbst und dich herum wächst und sei glücklich!",
-"Wie groß wäre die Amortisationszeit des Prozesses unter veränderten Bedingungen?",
-"Abzweigdose für Leitungen zur Aufnahme von elektrischen Kabeln",
-"Esperame un rato que tengo que reiniciar el modem",
-                  "¿Conoces algún lugar cerca donde podamos hablar tranquilamente?",
-"No me vengas con esto ahora.", "Parece que fue ayer, ¿no?", "¡Cuánto tiempo sin verte!",
-"¡Qué bien te ves!", "কারো সাথে ভাগাভাগি করলে সমস্যা অর্ধেক হয়ে যায়", "ভালবাসার নৌকা পাহাড় বইয়ে যায়।", "নয়নের মণি",
-"এই ভাষা যথেষ্ট নয়", "أهلاً", "لا تقلق", "كيف أصل إلى هناك، من فضلك؟", "أراك في المرة القادمة", "مساء الخير",
-"It's never been my responsibility to glaze the donuts.",
-                  "There's an art to getting your way, and spitting olive pits across the table isn't it.",
-"There's an art to getting your way, and spitting olive pits across the table isn't it.",
-"We should play with legos at camp.", "The events transpired in an unfortunate manner",
-                  "L'invention constitue donc un dispositif miniaturisé économique.",
-"Chaque participant peut soumettre jusqu'à cinq photos par concours.",
-                  "Je souhaite soumettre une œuvre VR.", "Hello! My name is Abderrahman! I like potatoes ",
-                  "This notion is beyond preposterous. I shall return to Liverpool and watch my beloved team play.",
-                  "تو شاہیں ہے پرواز ہے کام تیرا ترے سامنے اور بھی ہیں",
-                  "عروجِ آدم خاکی سے انجم سہمے جاتہ یہ ٹوٹا ہوا تارا مہ کامل نہ بن جائ",  "بھری بزم میں راز کی بات کہہ دی",
-                 "Quem vê cara não vê coração", "Quem não arrisca não petisca", "Você deveria pedir um aumento de salário",
-                  "Quem não arrisca não petisca!", "Aqui se faz, aqui se paga", "Cada macaco no seu galho", "Доверяй, но проверяй",
-                  "Мой дядя самых честных правил", "Не хочу учиться, а хочу жениться!", "Тварь я дрожащая или право имею",
-                  "Любовь зла, полюбишь и козла"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                  ]
-
+'''
+Make pickle file
+'''
+print("Pickling Model")
+pickle.dump(clf, open("mnbayes.pkl", "wb"))

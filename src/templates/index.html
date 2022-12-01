@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Languageliser</title>
+
+</head>
+
+<body>
+ <div class="window">
+	<h1>Language Identification</h1>
+
+    <form action="{{ url_for('predict')}}" method="post">
+		<input type="text" name="text" placeholder="Input your text here..." required="required" />
+        <button type="submit" class="btn btn-primary btn-block btn-large">Identify!</button>
+    </form>
+
+   {{ identified_lang }}
+
+ </div>
+
+
+</body>
+</html>
