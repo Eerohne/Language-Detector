@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template
 import pickle
 import re
-import string
+import random
 
 # Parameters
 word_per_lang = 300
@@ -85,13 +85,21 @@ def Home():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    feature = [str(txt) for txt in request.form.values()]
-    print(feature)
-    vector = [vectorize(clean(feature[0]), bag)]
-    identification = model.predict(vector)[0]
-    print(request.form.values())
+    if request.form['action'] == 'pick':
+        randIndex = random.randint(0, len(test_sentences) - 1)
+        chosenText = test_sentences[randIndex]
 
-    return render_template("index.html", identified_lang="Detected Language: {}.".format((label2Lang[identification])))
+
+    elif request.form['action'] == 'identify':
+        feature = [str(txt) for txt in request.form.values()]
+        ident = "Detected Language: {}."
+        if feature[0] == "":
+            ident = "No text was given as input!"
+        else:
+            vector = [vectorize(clean(feature[0]), bag)]
+            ident = "Detected Language: {}.".format(label2Lang[model.predict(vector)[0]])
+
+        return render_template("index.html", identified_lang=ident)
 
 
 if __name__ == "__main__":

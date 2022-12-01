@@ -11,8 +11,9 @@
 	<h1>Language Identification</h1>
 
     <form action="{{ url_for('predict')}}" method="post">
-		<input type="text" name="text" placeholder="Input your text here..." required="required" />
-        <button type="submit" class="btn btn-primary btn-block btn-large">Identify!</button>
+		<input type="text" name="text" placeholder="Input your text here..." />
+        <button type="submit" name="action" value="identify" class="btn btn-primary btn-block btn-large">Identify!</button>
+        <button type="submit" name="action" value="pick" class="btn btn-primary btn-block btn-large">Pick Random Sentence</button>
     </form>
 
    {{ identified_lang }}
