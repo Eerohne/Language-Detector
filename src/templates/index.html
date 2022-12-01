@@ -1,25 +1,63 @@
 <!DOCTYPE html>
-<html >
-<head>
-  <meta charset="UTF-8">
-  <title>Languageliser</title>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Languageliser</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+        <style>
+            body,h1 {font-family: "Raleway", sans-serif}
+            html {
+                height: 100%;
+                background-image: linear-gradient(to bottom right, yellow, red);
+            }
+            .window{
+                margin: 0px auto;
+                width: 500px;
+                height: 300px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            body {
+                min-height: 100%;
+                background-position: center;
+                background-size: cover;
+            }
+            .big-text {
+                font-size: 64px;
+            }
+            .window {
+                height: 300px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .text-field {
+                width: 500px; 
+                height: 90px; 
+                border: 1px solid #999999; 
+                padding: 5px; 
+            }
+        </style>
+    </head>
 
-</head>
-
-<body>
- <div class="window">
-	<h1>Language Identification</h1>
-
-    <form action="{{ url_for('predict')}}" method="post">
-		<input type="text" name="text" value="{{ random_text }}" placeholder="Input your text here..." />
-        <button type="submit" name="action" value="identify" class="btn btn-primary btn-block btn-large">Identify!</button>
-        <button type="submit" name="action" value="pick" class="btn btn-primary btn-block btn-large">Pick Random Sentence</button>
-    </form>
-
-   {{ identified_lang }}
-
- </div>
+    <body>
+        <div class="window">
+            <div class=""test>
+            <h1 class="big-text">LANGUAGELISER</h1>
+            <form class="ml-form" action="{{ url_for('predict') }}" method="post">
+                <input class="text-field" type="text" name="text" value="{{ random_text }}" placeholder="Input your text here..." /> 
+                <div class="button-box">
+                    <button class="buttons" type="submit" name="action" value="identify" class="btn btn-primary btn-block btn-large">Identify!</button>
+                    <button class="buttons" type="submit" name="action" value="pick" class="btn btn-primary btn-block btn-large">Pick Random Sentence</button>
+                </div>
+            </form>
 
 
-</body>
+            <div class="response-text">
+                {{ identified_lang }}
+            </div>
+            </div>
+        </div>
+    </body>
 </html>
