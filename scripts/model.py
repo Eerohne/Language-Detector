@@ -18,6 +18,12 @@ import pickle
 from collections import Counter
 import string
 import re
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestClassifier
+from sklearn import svm
 
 # Hyperparameters
 most_common_languages = ['eng', 'deu', 'hin', 'spa', 'fra', 'ara', 'ben', 'rus',
@@ -36,92 +42,7 @@ def clean(text):
     return clean_string
 
 
-# load in data labels and training data
-
-X_train_file = open('../wili-2018/x_train.txt', 'r')
-Y_train_file = open('../wili-2018/y_train.txt', 'r')
-X_train_str = X_train_file.read()
-Y_train_str = Y_train_file.read()
-
-X_train = X_train_str.split("\n")
-Y_train = Y_train_str.split("\n")
-
-# reduce data
-X_train_10 = []
-Y_train_10 = []
-for i in range(len(X_train)):
-    language = Y_train[i]
-    if language in most_common_languages:
-        X_train_10 = X_train_10 + [clean(X_train[i])]
-        Y_train_10 = Y_train_10 + [language]
-
-print("Length of X_train: " + str(len(X_train_10)))
-
-# create dictionary of text of all languages
-# with each key being a language and the values being every sentence in that languagae 
-
-lang_dict = {}
-for lang in most_common_languages:
-    lang_dict[lang] = []
-# print(lang_dict)
-
-for i in range(len(X_train_10)):
-    language = Y_train_10[i]
-    try:
-        lang_dict[language] = lang_dict[language] + [clean(X_train_10[i])]
-    except:
-        print(language)
-
-# print(lang_dict["eng"][0:2])
-
-# create a dictionary with language mapping to all words in the language
-vocab_dict = {}
-for lang in most_common_languages:
-    vocab_dict[lang] = []
-
-# for each language, first join the list of 
-# sentences then split to create a list of all words, then find all unique words 
-
-for language in lang_dict:  # iterate through dictionary, for each language,
-    # join list into giant string
-    words = " ".join(lang_dict[language])
-    # split words into list
-    list_words = words.split()
-    # append list of words into vocab dict
-    vocab_dict[language] = list_words
-
-print(vocab_dict["eng"])
-
-"""
-We will proceed now by implementing the bag-of-words method that takes a language and returns a list of the most 
-common words in it. 
-"""
-
-
-# Bag of words
-def bag_of_words(text, bag_size):
-    return [c[0] for c in Counter(text).most_common(bag_size)]
-
-
-bag = []
-
-for lang in most_common_languages:
-    bag = bag + bag_of_words(vocab_dict[lang], word_per_lang)
-
-print("Bag: " + str(len(bag)))
-print(bag)
-
-'''
-Save bag to file
-'''
-file = open('bag.txt', 'w')
-for word in bag:
-    file.writelines(word + '\n')
-file.close()
-
-
 # vectorize function (takes a sentence and returns a vector)
-
 def vectorize(sentence, vocab):
     return_dict = [0] * word_per_lang * 10
     count = 0
@@ -133,101 +54,175 @@ def vectorize(sentence, vocab):
     return return_dict
 
 
-# Vectorize the x train
+if "__main__" == __name__:
+    # load in data labels and training data
+    X_train_file = open('../wili-2018/x_train.txt', 'r', encoding='utf-8')
+    Y_train_file = open('../wili-2018/y_train.txt', 'r', encoding='utf-8')
+    X_train_str = X_train_file.read()
+    Y_train_str = Y_train_file.read()
 
-X_train_vect = []
-for i in X_train_10:
-    X_train_vect.append(vectorize(i, bag))
+    X_train = X_train_str.split("\n")
+    Y_train = Y_train_str.split("\n")
 
-# get test data
-X_test_file = open('../wili-2018/x_test.txt', 'r')
-Y_test_file = open('../wili-2018/y_test.txt', 'r')
-X_test_str = X_test_file.read()
-Y_test_str = Y_test_file.read()
+    # reduce data
+    X_train_10 = []
+    Y_train_10 = []
+    for i in range(len(X_train)):
+        language = Y_train[i]
+        if language in most_common_languages:
+            X_train_10 = X_train_10 + [clean(X_train[i])]
+            Y_train_10 = Y_train_10 + [language]
 
-X_test = X_test_str.split("\n")
-Y_test = Y_test_str.split("\n")
+    print("Length of X_train: " + str(len(X_train_10)))
 
-X_test_10 = []
-Y_test_10 = []
-for i in range(len(X_test)):
-    language = Y_test[i]
-    if language in most_common_languages:
-        X_test_10 = X_test_10 + [clean(X_test[i])]
-        Y_test_10 = Y_test_10 + [language]
+    # create dictionary of text of all languages
+    # with each key being a language and the values being every sentence in that languagae
 
-print("Length of X_test: " + str(len(X_test_10)))
+    lang_dict = {}
+    for lang in most_common_languages:
+        lang_dict[lang] = []
+    # print(lang_dict)
 
-# vectorize test set
-X_test_vect = []
-for i in X_test_10:
-    X_test_vect.append(vectorize(i, bag))
+    for i in range(len(X_train_10)):
+        language = Y_train_10[i]
+        try:
+            lang_dict[language] = lang_dict[language] + [clean(X_train_10[i])]
+        except:
+            print(language)
 
-"""Implementation of Naive Bayes"""
-# fit model and test accuracy
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import ConfusionMatrixDisplay
-import matplotlib.pyplot as plt
+    # print(lang_dict["eng"][0:2])
 
-print("Start to Train Naive Bayes")
-# classify through multinomial naive bayes and fit the data accordingly 
-clf = MultinomialNB()
-clf.fit(X_train_vect, Y_train_10)
+    # create a dictionary with language mapping to all words in the language
+    vocab_dict = {}
+    for lang in most_common_languages:
+        vocab_dict[lang] = []
 
-# predict languages languages 
-Y_train_pred = clf.predict(X_train_vect)
-Y_test_pred = clf.predict(X_test_vect)
+    # for each language, first join the list of
+    # sentences then split to create a list of all words, then find all unique words
 
-# print accuracy scores
-print("Training accuracy: ", accuracy_score(Y_train_pred, Y_train_10))
-print("Test accuracy: ", accuracy_score(Y_test_pred, Y_test_10))
+    for language in lang_dict:  # iterate through dictionary, for each language,
+        # join list into giant string
+        words = " ".join(lang_dict[language])
+        # split words into list
+        list_words = words.split()
+        # append list of words into vocab dict
+        vocab_dict[language] = list_words
 
-# plot confusion matrix
-ConfusionMatrixDisplay.from_predictions(
-    Y_test_10, Y_test_pred)
-plt.show()
+    print(vocab_dict["eng"])
 
-# Random forest 
-from sklearn.ensemble import RandomForestClassifier
-
-print("Start to Train Random Forest")
-rfc = RandomForestClassifier(n_estimators=500, min_samples_split=60, max_depth=55, max_features=80)
-rfc.fit(X_train_vect, Y_train_10)
-print(accuracy_score(rfc.predict(X_train_vect), Y_train_10))
-print(accuracy_score(rfc.predict(X_test_vect), Y_test_10))
-
-ConfusionMatrixDisplay.from_predictions(
-    Y_test_10, rfc.predict(X_test_vect))
-plt.show()
-
-from sklearn import svm
-
-print("Start to Train SVM")
-svm_clf = svm.LinearSVC(max_iter=10000)
-svm_clf.fit(X_train_vect, Y_train_10)
-print(accuracy_score(svm_clf.predict(X_train_vect), Y_train_10))
-print(accuracy_score(svm_clf.predict(X_test_vect), Y_test_10))
-
-'''
-for i in range(len(Y_train_10)) : 
-  print("language: ", Y_train_10[i])
-  print("accuracy: ", accuracy_score(svm_clf.predict(X_train_vect), Y_train_10[i]))
-'''
-
-ConfusionMatrixDisplay.from_predictions(
-    Y_test_10, svm_clf.predict(X_test_vect))
-plt.show()
+    """
+    We will proceed now by implementing the bag-of-words method that takes a language and returns a list of the most 
+    common words in it. 
+    """
+    # Bag of words
+    def bag_of_words(text, bag_size):
+        return [c[0] for c in Counter(text).most_common(bag_size)]
 
 
-def identify_text(text):
-    vector = [vectorize(clean(text), bag)]
-    print("SVM: " + svm_clf.predict(vector)[0] + " | Random Forest: " + rfc.predict(vector)[0] + " | Naive Bayes: " +
-          clf.predict(vector)[0])
+    bag = []
+
+    for lang in most_common_languages:
+        bag = bag + bag_of_words(vocab_dict[lang], word_per_lang)
+
+    print("Bag: " + str(len(bag)))
+    print(bag)
+
+    '''
+    Save bag to file
+    '''
+    file = open('bag.txt', 'w', encoding='utf-8')
+    for word in bag:
+        file.writelines(word + '\n')
+    file.close()
+
+    # Vectorize the x train
+
+    X_train_vect = []
+    for i in X_train_10:
+        X_train_vect.append(vectorize(i, bag))
+
+    # get test data
+    X_test_file = open('../wili-2018/x_test.txt', 'r', encoding='utf-8')
+    Y_test_file = open('../wili-2018/y_test.txt', 'r', encoding='utf-8')
+    X_test_str = X_test_file.read()
+    Y_test_str = Y_test_file.read()
+
+    X_test = X_test_str.split("\n")
+    Y_test = Y_test_str.split("\n")
+
+    X_test_10 = []
+    Y_test_10 = []
+    for i in range(len(X_test)):
+        language = Y_test[i]
+        if language in most_common_languages:
+            X_test_10 = X_test_10 + [clean(X_test[i])]
+            Y_test_10 = Y_test_10 + [language]
+
+    print("Length of X_test: " + str(len(X_test_10)))
+
+    # vectorize test set
+    X_test_vect = []
+    for i in X_test_10:
+        X_test_vect.append(vectorize(i, bag))
+
+    """Implementation of Naive Bayes"""
+    # fit model and test accuracy
+    print("Start to Train Naive Bayes")
+    # classify through multinomial naive bayes and fit the data accordingly
+    clf = MultinomialNB()
+    clf.fit(X_train_vect, Y_train_10)
+
+    # predict languages languages
+    Y_train_pred = clf.predict(X_train_vect)
+    Y_test_pred = clf.predict(X_test_vect)
+
+    # print accuracy scores
+    print("Training accuracy: ", accuracy_score(Y_train_pred, Y_train_10))
+    print("Test accuracy: ", accuracy_score(Y_test_pred, Y_test_10))
+
+    # plot confusion matrix
+    ConfusionMatrixDisplay.from_predictions(
+        Y_test_10, Y_test_pred)
+    plt.show()
+
+    # Random forest
+    print("Start to Train Random Forest")
+    rfc = RandomForestClassifier(n_estimators=500, min_samples_split=60, max_depth=55, max_features=80)
+    rfc.fit(X_train_vect, Y_train_10)
+    print(accuracy_score(rfc.predict(X_train_vect), Y_train_10))
+    print(accuracy_score(rfc.predict(X_test_vect), Y_test_10))
+
+    ConfusionMatrixDisplay.from_predictions(
+        Y_test_10, rfc.predict(X_test_vect))
+    plt.show()
+
+    # Support Vector Machine
+    print("Start to Train SVM")
+    svm_clf = svm.LinearSVC(max_iter=10000)
+    svm_clf.fit(X_train_vect, Y_train_10)
+    print(accuracy_score(svm_clf.predict(X_train_vect), Y_train_10))
+    print(accuracy_score(svm_clf.predict(X_test_vect), Y_test_10))
+
+    '''
+    for i in range(len(Y_train_10)) : 
+      print("language: ", Y_train_10[i])
+      print("accuracy: ", accuracy_score(svm_clf.predict(X_train_vect), Y_train_10[i]))
+    '''
+
+    ConfusionMatrixDisplay.from_predictions(
+        Y_test_10, svm_clf.predict(X_test_vect))
+    plt.show()
 
 
-'''
-Make pickle file
-'''
-print("Pickling Model")
-pickle.dump(clf, open("mnbayes.pkl", "wb"))
+    def identify_text(text):
+        vector = [vectorize(clean(text), bag)]
+        print(
+            "SVM: " + svm_clf.predict(vector)[0] + " | Random Forest: " + rfc.predict(vector)[0] + " | Naive Bayes: " +
+            clf.predict(vector)[0])
+
+
+    '''
+    Make pickle file
+    '''
+    print("Pickling Model")
+    pickle.dump(clf, open("mnbayes.pkl", "wb"))

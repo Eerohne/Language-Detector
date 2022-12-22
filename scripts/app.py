@@ -1,10 +1,9 @@
 from flask import Flask, request, render_template
 import pickle
-import re
 import random
+from model import word_per_lang, clean, vectorize
 
 # Parameters
-word_per_lang = 300
 label2Lang = {
     "eng": "English",
     "rus": "Russian",
@@ -48,30 +47,10 @@ test_sentences = ["Lebe, wie du, wenn du stirbst, wünschen wirst, gelebt zu hab
                   "Любовь зла, полюбишь и козла"]
 
 
-# Vectorize function
-def clean(text):
-    clean_string = text.lower()  # make lower case
-    pattern = r'[0-9]'
-    clean_string = re.sub(pattern, '', clean_string)
-    clean_string = re.sub(r'[\\\\/:*«`\'?¿";!<>,.|()-_)(}{#$%@^&~+-=–—‘’“”„†•…′ⁿ№−、《》「」『』（），－：；] ° »/():–".،', '',
-                          text.lower().strip())
-    return clean_string
-
-
-def vectorize(sentence, vocab):
-    return_dict = [0] * word_per_lang * 10
-    count = 0
-    for i in [vocab.index(word) for word in sentence.split() if word in vocab]:
-        return_dict[i] += 1
-        count += 1
-
-    return return_dict
-
-
 # Import pickle model
 model = pickle.load(open("mnbayes.pkl", "rb"))
 bag = []
-with open('bag.txt') as file:
+with open('bag.txt', 'r', encoding='utf-8') as file:
     bag = file.read().splitlines()
 
 # Initiate flask app
